@@ -100,21 +100,6 @@ function Index() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <div className="flex flex-1 items-center gap-2 rounded-full border border-border bg-background/70 px-2 py-1.5 backdrop-blur">
-              <Input
-                value={pendingUrl}
-                onChange={(e) => setPendingUrl(e.target.value)}
-                placeholder="http://localhost:5000"
-                className="h-9 border-0 bg-transparent text-sm shadow-none focus-visible:ring-0"
-                aria-label="Backend URL"
-              />
-              <Button
-                onClick={handleConnect}
-                className="h-9 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90"
-              >
-                {enabled ? "Reconnect" : "Connect"}
-              </Button>
-            </div>
             <Button
               onClick={handleDownload}
               variant="outline"
