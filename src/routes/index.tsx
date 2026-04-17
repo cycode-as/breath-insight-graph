@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import brainHero from "@/assets/brain-hero.png";
+import lungsHero from "@/assets/lungs-hero.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSleepSocket } from "@/hooks/use-socket";
@@ -130,13 +130,13 @@ function Index() {
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 -z-10 rounded-full bg-accent/30 blur-3xl" />
           <img
-            src={brainHero}
-            alt="3D anatomical brain visualization"
+            src={lungsHero}
+            alt="3D anatomical respiratory system visualization"
             width={1024}
             height={1024}
-            className="float-slow w-full max-w-md drop-shadow-[0_20px_60px_oklch(0.65_0.22_350/0.25)]"
+            className="breathe w-full max-w-md"
           />
-          <FloatingPill className="left-2 top-10 md:left-6" label="Connectivity" />
+          <FloatingPill className="left-2 top-10 md:left-6" label="Airflow" />
           <FloatingPill className="right-2 top-24 md:right-4" label="Spectrogram" />
           <FloatingPill className="bottom-16 left-1/4" label="Real-time power" />
         </div>
