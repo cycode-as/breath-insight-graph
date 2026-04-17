@@ -85,20 +85,6 @@ function Index() {
           </div>
           <span className="text-xl font-semibold tracking-tight">Bdata</span>
         </div>
-        <div className="hidden items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-xs font-medium backdrop-blur md:flex">
-          {connected ? (
-            <>
-              <Wifi className="h-3.5 w-3.5 text-success" />
-              <span className="text-muted-foreground">Connected</span>
-              <span className="text-foreground">{url.replace(/^https?:\/\//, "")}</span>
-            </>
-          ) : (
-            <>
-              <WifiOff className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">Not connected</span>
-            </>
-          )}
-        </div>
       </header>
 
       {/* Hero */}
