@@ -11,11 +11,11 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Bdata — AI for Resting Brain Activity" },
+      { title: "SnoreShift — Real-Time Sleep Apnea Detection" },
       {
         name: "description",
         content:
-          "AI-powered EEG monitoring with real-time FFT visualization and snoring signature detection (100–300 Hz).",
+          "AI-powered monitoring with real-time FFT visualization and snoring signature detection (100–300 Hz).",
       },
     ],
   }),
@@ -83,7 +83,7 @@ function Index() {
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/20 bg-background/60 backdrop-blur">
             <Activity className="h-4 w-4" />
           </div>
-          <span className="text-xl font-semibold tracking-tight">Bdata</span>
+          <span className="text-xl font-semibold tracking-tight">SnoreShift</span>
         </div>
       </header>
 
@@ -91,14 +91,12 @@ function Index() {
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-12 pt-8 lg:grid-cols-2 lg:gap-8 lg:pt-16">
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl leading-[1.05] text-foreground md:text-6xl lg:text-7xl">
-            AI for Understanding
-            <br />
-            Resting Brain Activity
+            Real-Time Sleep Apnea Detection
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            An AI-powered EEG tool that converts resting brain data into a visually rich, dynamic
-            clinical report in seconds — providing practitioners with unprecedented, spatially
-            accurate visualization.
+            Analyzing breathing and snoring
+            <br />
+            patterns through sound.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
