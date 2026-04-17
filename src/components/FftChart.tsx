@@ -9,6 +9,7 @@ import {
   Filler,
   type Plugin,
   type ChartOptions,
+  type ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -73,15 +74,16 @@ type Props = {
 };
 
 export default function FftChart({ frequencies, magnitudes }: Props) {
-  const data = useMemo(
+  const data = useMemo<ChartData<"line", number[], number>>(
     () => ({
       labels: frequencies,
       datasets: [
         {
           data: magnitudes,
           borderColor: "oklch(0.55 0.18 290)",
-          backgroundColor: (ctx: { chart: ChartJS }) => {
-            const { ctx: c, chartArea } = ctx.chart;
+          backgroundColor: (ctx) => {
+            const chart = ctx.chart;
+            const { ctx: c, chartArea } = chart;
             if (!chartArea) return "oklch(0.55 0.18 290 / 0.1)";
             const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
             g.addColorStop(0, "oklch(0.55 0.18 290 / 0.35)");
@@ -92,11 +94,12 @@ export default function FftChart({ frequencies, magnitudes }: Props) {
           pointRadius: 0,
           tension: 0.35,
           fill: true,
-          // color line segment red inside 100-300 Hz
           segment: {
-            borderColor: (c: { p0: { parsed: { x: number } }; p1: { parsed: { x: number } } }) => {
-              const f0 = frequencies[c.p0.parsed.x];
-              const f1 = frequencies[c.p1.parsed.x];
+            borderColor: (c) => {
+              const i0 = (c.p0.parsed.x as number | null) ?? 0;
+              const i1 = (c.p1.parsed.x as number | null) ?? 0;
+              const f0 = frequencies[i0];
+              const f1 = frequencies[i1];
               if (f0 >= 100 && f1 <= 300) return "oklch(0.6 0.24 350)";
               return "oklch(0.55 0.18 290)";
             },
