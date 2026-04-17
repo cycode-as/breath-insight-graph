@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import lungsHero from "@/assets/lungs-hero.png";
+import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSleepSocket } from "@/hooks/use-socket";
@@ -130,14 +130,14 @@ function Index() {
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 -z-10 rounded-full bg-accent/30 blur-3xl" />
           <img
-            src={lungsHero}
-            alt="3D anatomical respiratory system visualization"
+            src={pillowHero}
+            alt="Guardian's Pillow — smart anti-snoring sleep device"
             width={1024}
             height={1024}
-            className="breathe w-full max-w-md"
+            className="float-slow w-full max-w-md drop-shadow-[0_25px_60px_oklch(0.65_0.22_350/0.3)]"
           />
-          <FloatingPill className="left-2 top-10 md:left-6" label="Airflow" />
-          <FloatingPill className="right-2 top-24 md:right-4" label="Spectrogram" />
+          <FloatingPill className="left-2 top-10 md:left-6" label="Guardian's Pillow" />
+          <FloatingPill className="right-2 top-24 md:right-4" label="Smart Sensors" />
           <FloatingPill className="bottom-16 left-1/4" label="Real-time power" />
         </div>
       </section>
