@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "SnoreShift — Real-Time Sleep Apnea Detection" },
+      { title: "SnoreShift" },
       {
         name: "description",
         content:
