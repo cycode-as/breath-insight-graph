@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useSleepSocket } from "@/hooks/use-socket";
 import FftChart from "@/components/FftChart";
-import { Activity, Download, Wifi, WifiOff } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+import { getBaseUrl, getSerialId } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -21,25 +21,21 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const DEFAULT_URL = "http://localhost:5000";
-
 function fsrLabel(fsr: string) {
   if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
-  return {
-    text: "Monitoring Active",
-    sub: `FSR: 1 (${fsr.replace("FSR_", "")})`,
-    active: true,
-  };
+  return { text: "Monitoring Active", sub: `FSR: 1 (${fsr.replace("FSR_", "")})`, active: true };
 }
 
 function Index() {
-  const [url, setUrl] = useState(DEFAULT_URL);
-  const [pendingUrl, setPendingUrl] = useState(DEFAULT_URL);
-  const [enabled, setEnabled] = useState(false);
+  const [url] = useState(() => getBaseUrl());
+  const [serial, setSerial] = useState<string | null>(null);
 
-  const { connected, fft, fsrState, status } = useSleepSocket(url, enabled);
+  useEffect(() => {
+    setSerial(getSerialId());
+  }, []);
 
-  // Demo placeholder data so chart isn't empty before connection
+  const { fft, fsrState, status } = useSleepSocket(url, !!serial);
+
   const demo = useMemo(() => {
     const freqs = Array.from({ length: 128 }, (_, i) => i * 4);
     const mags = freqs.map((f) => {
@@ -53,21 +49,6 @@ function Index() {
   const chartData = fft ?? demo;
   const fsr = fsrLabel(fsrState);
 
-  const handleConnect = () => {
-    setUrl(pendingUrl);
-    setEnabled(true);
-  };
-
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = `${url}/download_history`;
-    link.setAttribute("download", "sleep_history.csv");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  };
-
-  // tiny live tick to keep chart re-render smooth even on demo
   const [, setTick] = useState(0);
   useEffect(() => {
     if (fft) return;
@@ -77,21 +58,7 @@ function Index() {
 
   return (
     <main className="min-h-screen bg-hero-gradient">
-      {/* Nav */}
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/20 bg-background/60 backdrop-blur">
-            <Activity className="h-4 w-4" />
-          </div>
-          <span className="text-xl font-semibold tracking-tight">SnoreShift</span>
-        </div>
-        <Button
-          asChild
-          className="h-10 rounded-full px-5"
-        >
-          <Link to="/auth">Sign In / Sign Up</Link>
-        </Button>
-      </header>
+      <SiteHeader />
 
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-12 pt-8 lg:grid-cols-2 lg:gap-8 lg:pt-16">
@@ -106,18 +73,21 @@ function Index() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button asChild className="h-12 rounded-full px-6 text-sm font-semibold">
+              <Link to={serial ? "/dashboard" : "/auth"}>
+                {serial ? "Open Dashboard" : "Start Monitoring"}
+              </Link>
+            </Button>
             <Button
-              onClick={handleDownload}
+              asChild
               variant="outline"
               className="h-12 rounded-full border-foreground/20 bg-background/70 px-6 backdrop-blur"
             >
-              <Download className="mr-2 h-4 w-4" />
-              Download Sleep History
+              <Link to="/logs">View Logs & History</Link>
             </Button>
           </div>
         </div>
 
-        {/* Brain image with floating pills */}
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 -z-10 rounded-full bg-accent/30 blur-3xl" />
           <img
@@ -133,7 +103,7 @@ function Index() {
         </div>
       </section>
 
-      {/* Live monitor */}
+      {/* Live monitor preview */}
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="rounded-3xl border border-border bg-card/80 p-6 shadow-soft backdrop-blur md:p-8">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -160,30 +130,19 @@ function Index() {
           </div>
 
           <div className="h-[420px] w-full">
-            <FftChart
-              frequencies={chartData.frequencies}
-              magnitudes={chartData.magnitudes}
-            />
+            <FftChart frequencies={chartData.frequencies} magnitudes={chartData.magnitudes} />
           </div>
 
-          {/* Stats row */}
           <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Stat
-              label="Dominant Freq"
-              value={fft?.dominant_hz != null ? `${fft.dominant_hz.toFixed(1)} Hz` : "—"}
-            />
-            <Stat
-              label="Energy"
-              value={fft?.energy != null ? fft.energy.toFixed(3) : "—"}
-            />
+            <Stat label="Dominant Freq" value={fft?.dominant_hz != null ? `${fft.dominant_hz.toFixed(1)} Hz` : "—"} />
+            <Stat label="Energy" value={fft?.energy != null ? fft.energy.toFixed(3) : "—"} />
             <Stat label="Snore Count" value={status?.snore_count?.toString() ?? "0"} />
             <Stat label="Session" value={status?.session_time ?? "00:00:00"} />
           </div>
 
-          {!enabled && (
+          {!serial && (
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              Showing demo spectrum. Enter your backend URL above and click Connect to stream live
-              FFT data.
+              Showing demo spectrum. Sign in to stream live data from your Guardian's Pillow.
             </p>
           )}
         </div>
@@ -206,9 +165,7 @@ function FloatingPill({ className, label }: { className?: string; label: string 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-border bg-background/60 px-4 py-3">
-      <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-        {label}
-      </div>
+      <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{label}</div>
       <div className="mt-1 font-mono text-sm font-semibold text-foreground">{value}</div>
     </div>
   );
