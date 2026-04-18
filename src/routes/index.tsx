@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
@@ -85,6 +85,12 @@ function Index() {
           </div>
           <span className="text-xl font-semibold tracking-tight">SnoreShift</span>
         </div>
+        <Button
+          asChild
+          className="h-10 rounded-full px-5"
+        >
+          <Link to="/auth">Sign In / Sign Up</Link>
+        </Button>
       </header>
 
       {/* Hero */}
