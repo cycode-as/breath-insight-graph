@@ -203,6 +203,23 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-12px); }
   }
+  .spin-slow {
+    animation: spin-slow 18s linear infinite;
+  }
+  .spin-slow-reverse {
+    animation: spin-slow 24s linear infinite reverse;
+  }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .orbit-icon {
+    animation: orbit-icon-counter 18s linear infinite;
+  }
+  @keyframes orbit-icon-counter {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
   .breathe {
     animation: breathe 4.5s ease-in-out infinite;
     transform-origin: center center;
