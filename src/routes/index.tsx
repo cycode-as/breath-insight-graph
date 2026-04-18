@@ -85,14 +85,6 @@ function Index() {
           </div>
           <span className="text-xl font-semibold tracking-tight">SnoreShift</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" className="h-9 rounded-full px-4 text-sm font-medium">
-            Sign in
-          </Button>
-          <Button className="h-9 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90">
-            Sign up
-          </Button>
-        </div>
       </header>
 
       {/* Hero */}
