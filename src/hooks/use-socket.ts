@@ -19,18 +19,13 @@ export type StatusPayload = {
   cpu_usage?: number;
 };
 
-<<<<<<< HEAD
 export type LogEntry = {
-=======
-export type LogEvent = {
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
   time: string;
   event: string;
   action: string;
   result: string;
 };
 
-<<<<<<< HEAD
 export type ApneaTimerPayload = {
   elapsed: number;
   threshold: number;
@@ -39,10 +34,6 @@ export type ApneaTimerPayload = {
 export type CountdownPayload = {
   seconds: number;
 };
-=======
-export type ApneaTimer = { elapsed: number; threshold: number };
-export type Countdown = { seconds: number };
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
 export function useSleepSocket(url: string, enabled: boolean) {
   const socketRef = useRef<Socket | null>(null);
@@ -50,15 +41,9 @@ export function useSleepSocket(url: string, enabled: boolean) {
   const [fft, setFft] = useState<FftPayload | null>(null);
   const [fsrState, setFsrState] = useState<string>("FSR_0");
   const [status, setStatus] = useState<StatusPayload | null>(null);
-<<<<<<< HEAD
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [apneaTimer, setApneaTimer] = useState<ApneaTimerPayload | null>(null);
   const [countdown, setCountdown] = useState<CountdownPayload | null>(null);
-=======
-  const [logs, setLogs] = useState<LogEvent[]>([]);
-  const [apnea, setApnea] = useState<ApneaTimer | null>(null);
-  const [countdown, setCountdown] = useState<Countdown | null>(null);
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
   useEffect(() => {
     if (!enabled || !url) return;
@@ -75,27 +60,11 @@ export function useSleepSocket(url: string, enabled: boolean) {
       setStatus(data);
       if (data?.fsr_state) setFsrState(data.fsr_state);
     });
-<<<<<<< HEAD
     socket.on("log_update", (entry: LogEntry) =>
       setLogs((prev) => [entry, ...prev].slice(0, 200)),
     );
     socket.on("apnea_timer", (data: ApneaTimerPayload) => setApneaTimer(data));
     socket.on("countdown_start", (data: CountdownPayload) => setCountdown(data));
-=======
-    socket.on("log_update", (data: LogEvent) => {
-      setLogs((prev) => [data, ...prev].slice(0, 200));
-    });
-    socket.on("apnea_timer", (data: ApneaTimer) => {
-      setApnea(data);
-      if (data.elapsed >= data.threshold) {
-        setTimeout(() => setApnea(null), 4000);
-      }
-    });
-    socket.on("countdown_start", (data: Countdown) => {
-      setCountdown(data);
-      setTimeout(() => setCountdown(null), (data.seconds + 0.5) * 1000);
-    });
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
     return () => {
       socket.disconnect();
@@ -104,9 +73,5 @@ export function useSleepSocket(url: string, enabled: boolean) {
     };
   }, [url, enabled]);
 
-<<<<<<< HEAD
   return { connected, fft, fsrState, status, logs, apneaTimer, countdown, setApneaTimer, setCountdown };
-=======
-  return { connected, fft, fsrState, status, logs, apnea, countdown };
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 }

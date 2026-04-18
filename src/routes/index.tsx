@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-=======
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
 import { useSleepSocket } from "@/hooks/use-socket";
 import FftChart from "@/components/FftChart";
-<<<<<<< HEAD
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -17,10 +11,6 @@ import {
   LogOut, Clock, AlertTriangle, CheckCircle2, Layers, Cpu,
   RefreshCw, WifiOff,
 } from "lucide-react";
-=======
-import SiteHeader from "@/components/SiteHeader";
-import { getBaseUrl, getSerialId } from "@/lib/api";
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -32,7 +22,6 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-<<<<<<< HEAD
 const BASE_URL = "http://localhost:5000";
 
 function fsrLabel(fsr: string) {
@@ -82,23 +71,6 @@ function Index() {
   useEffect(() => { if (connected) setEverConnected(true); }, [connected]);
 
   // demo data for chart before live data arrives
-=======
-function fsrLabel(fsr: string) {
-  if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
-  return { text: "Monitoring Active", sub: `FSR: 1 (${fsr.replace("FSR_", "")})`, active: true };
-}
-
-function Index() {
-  const [url] = useState(() => getBaseUrl());
-  const [serial, setSerial] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSerial(getSerialId());
-  }, []);
-
-  const { fft, fsrState, status } = useSleepSocket(url, !!serial);
-
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
   const demo = useMemo(() => {
     const freqs = Array.from({ length: 128 }, (_, i) => i * 4);
     const mags = freqs.map((f) => {
@@ -109,12 +81,6 @@ function Index() {
     return { frequencies: freqs, magnitudes: mags };
   }, []);
 
-<<<<<<< HEAD
-=======
-  const chartData = fft ?? demo;
-  const fsr = fsrLabel(fsrState);
-
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
   const [, setTick] = useState(0);
   useEffect(() => {
     if (fft) return;
@@ -188,15 +154,10 @@ function Index() {
 
   return (
     <main className="min-h-screen bg-hero-gradient">
-<<<<<<< HEAD
-
       {/* Apnea Alert Overlay */}
       {apneaTimer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="mx-4 w-full max-w-sm rounded-3xl border border-destructive/40 bg-card p-8 shadow-glow text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-8 w-8 text-destructive" />
-            </div>
             <h3 className="text-2xl text-foreground">Apnea Detected</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               No breathing detected for{" "}
@@ -259,42 +220,21 @@ function Index() {
           </Button>
         </div>
       </header>
-=======
-      <SiteHeader />
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-12 pt-8 lg:grid-cols-2 lg:gap-8 lg:pt-16">
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl leading-[1.05] text-foreground md:text-6xl lg:text-7xl">
-            Real-Time Sleep Apnea Detection
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
             Analyzing breathing and snoring<br />patterns through sound.
-          </p>
+          </h1>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-<<<<<<< HEAD
             <Button onClick={handleDownload} variant="outline" className="h-12 rounded-full border-foreground/20 bg-background/70 px-6 backdrop-blur">
               <Download className="mr-2 h-4 w-4" />
               Download Sleep History
-=======
-            <Button asChild className="h-12 rounded-full px-6 text-sm font-semibold">
-              <Link to={serial ? "/dashboard" : "/auth"}>
-                {serial ? "Open Dashboard" : "Start Monitoring"}
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="h-12 rounded-full border-foreground/20 bg-background/70 px-6 backdrop-blur"
-            >
-              <Link to="/logs">View Logs & History</Link>
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
             </Button>
           </div>
         </div>
-
-        <div className="relative flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <div className="absolute inset-0 -z-10 rounded-full bg-accent/30 blur-3xl" />
           <img src={pillowHero} alt="Guardian's Pillow" width={1024} height={1024} className="float-slow w-full max-w-md drop-shadow-[0_25px_60px_oklch(0.65_0.22_350/0.3)]" />
           <FloatingPill className="left-2 top-10 md:left-6" label="Guardian's Pillow" />
@@ -303,11 +243,7 @@ function Index() {
         </div>
       </section>
 
-<<<<<<< HEAD
       {/* Dashboard tabs */}
-=======
-      {/* Live monitor preview */}
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <Tabs defaultValue="monitor">
           <TabsList className="mb-6 rounded-full border border-border bg-background/70 p-1 backdrop-blur">
@@ -323,10 +259,7 @@ function Index() {
               {/* System Status */}
               <div className="rounded-3xl border border-border bg-card/80 p-6 shadow-soft backdrop-blur">
                 <div className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">System Status</div>
-                <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${sm.color}`}>
-                  {sm.icon}{status?.status ?? "IDLE"}
-                </span>
-                <div className="mt-5 grid grid-cols-2 gap-3">
+                <div className="space-y-3">
                   <MiniStat icon={<Clock className="h-3.5 w-3.5" />} label="Session" value={status?.session_time ?? "00:00:00"} />
                   <MiniStat icon={<BedDouble className="h-3.5 w-3.5" />} label="Bed" value={fsr.text} active={fsr.active} />
                   <MiniStat icon={<Activity className="h-3.5 w-3.5" />} label="Snore Count" value={status?.snore_count?.toString() ?? "0"} />
@@ -368,7 +301,6 @@ function Index() {
               </div>
             </div>
 
-<<<<<<< HEAD
             {/* FFT Chart */}
             <div className="rounded-3xl border border-border bg-card/80 p-6 shadow-soft backdrop-blur md:p-8">
               <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -506,25 +438,6 @@ function Index() {
             </div>
           </TabsContent>
         </Tabs>
-=======
-          <div className="h-[420px] w-full">
-            <FftChart frequencies={chartData.frequencies} magnitudes={chartData.magnitudes} />
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Stat label="Dominant Freq" value={fft?.dominant_hz != null ? `${fft.dominant_hz.toFixed(1)} Hz` : "—"} />
-            <Stat label="Energy" value={fft?.energy != null ? fft.energy.toFixed(3) : "—"} />
-            <Stat label="Snore Count" value={status?.snore_count?.toString() ?? "0"} />
-            <Stat label="Session" value={status?.session_time ?? "00:00:00"} />
-          </div>
-
-          {!serial && (
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              Showing demo spectrum. Sign in to stream live data from your Guardian's Pillow.
-            </p>
-          )}
-        </div>
->>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
       </section>
     </main>
   );
