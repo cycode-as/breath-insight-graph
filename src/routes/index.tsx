@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
@@ -86,19 +86,12 @@ function Index() {
           <span className="text-xl font-semibold tracking-tight">SnoreShift</span>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/logs" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
-            Logs
-          </Link>
-          <Link to="/dashboard">
-            <Button variant="ghost" className="h-9 rounded-full px-4 text-sm font-medium">
-              Dashboard
-            </Button>
-          </Link>
-          <Link to="/auth">
-            <Button className="h-9 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90">
-              Sign in
-            </Button>
-          </Link>
+          <Button variant="ghost" className="h-9 rounded-full px-4 text-sm font-medium">
+            Sign in
+          </Button>
+          <Button className="h-9 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90">
+            Sign up
+          </Button>
         </div>
       </header>
 

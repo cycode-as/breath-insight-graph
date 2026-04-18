@@ -19,20 +19,12 @@ export type StatusPayload = {
   cpu_usage?: number;
 };
 
-export type LogRow = { time: string; event: string; action: string; result: string };
-export type ApneaTimer = { elapsed: number; threshold: number };
-export type Countdown = { seconds: number };
-
 export function useSleepSocket(url: string, enabled: boolean) {
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [fft, setFft] = useState<FftPayload | null>(null);
   const [fsrState, setFsrState] = useState<string>("FSR_0");
   const [status, setStatus] = useState<StatusPayload | null>(null);
-  const [liveLogs, setLiveLogs] = useState<LogRow[]>([]);
-  const [apnea, setApnea] = useState<ApneaTimer | null>(null);
-  const [countdown, setCountdown] = useState<Countdown | null>(null);
-  const countdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!enabled || !url) return;
@@ -49,37 +41,13 @@ export function useSleepSocket(url: string, enabled: boolean) {
       setStatus(data);
       if (data?.fsr_state) setFsrState(data.fsr_state);
     });
-    socket.on("log_update", (row: LogRow) => {
-      setLiveLogs((prev) => [row, ...prev].slice(0, 200));
-    });
-    socket.on("apnea_timer", (data: ApneaTimer) => setApnea(data));
-    socket.on("countdown_start", (data: Countdown) => {
-      setCountdown(data);
-      if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
-      countdownTimerRef.current = setTimeout(
-        () => setCountdown(null),
-        (data?.seconds ?? 10) * 1000,
-      );
-    });
 
     return () => {
       socket.disconnect();
       socketRef.current = null;
       setConnected(false);
-      if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
     };
   }, [url, enabled]);
 
-  const clearApnea = () => setApnea(null);
-
-  return {
-    connected,
-    fft,
-    fsrState,
-    status,
-    liveLogs,
-    apnea,
-    countdown,
-    clearApnea,
-  };
+  return { connected, fft, fsrState, status };
 }
