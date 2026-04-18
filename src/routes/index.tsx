@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+=======
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 import pillowHero from "@/assets/pillow-hero.png";
 import { Button } from "@/components/ui/button";
 import { useSleepSocket } from "@/hooks/use-socket";
 import FftChart from "@/components/FftChart";
+<<<<<<< HEAD
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -11,6 +17,10 @@ import {
   LogOut, Clock, AlertTriangle, CheckCircle2, Layers, Cpu,
   RefreshCw, WifiOff,
 } from "lucide-react";
+=======
+import SiteHeader from "@/components/SiteHeader";
+import { getBaseUrl, getSerialId } from "@/lib/api";
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -22,6 +32,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
+<<<<<<< HEAD
 const BASE_URL = "http://localhost:5000";
 
 function fsrLabel(fsr: string) {
@@ -71,6 +82,23 @@ function Index() {
   useEffect(() => { if (connected) setEverConnected(true); }, [connected]);
 
   // demo data for chart before live data arrives
+=======
+function fsrLabel(fsr: string) {
+  if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
+  return { text: "Monitoring Active", sub: `FSR: 1 (${fsr.replace("FSR_", "")})`, active: true };
+}
+
+function Index() {
+  const [url] = useState(() => getBaseUrl());
+  const [serial, setSerial] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSerial(getSerialId());
+  }, []);
+
+  const { fft, fsrState, status } = useSleepSocket(url, !!serial);
+
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
   const demo = useMemo(() => {
     const freqs = Array.from({ length: 128 }, (_, i) => i * 4);
     const mags = freqs.map((f) => {
@@ -81,6 +109,12 @@ function Index() {
     return { frequencies: freqs, magnitudes: mags };
   }, []);
 
+<<<<<<< HEAD
+=======
+  const chartData = fft ?? demo;
+  const fsr = fsrLabel(fsrState);
+
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
   const [, setTick] = useState(0);
   useEffect(() => {
     if (fft) return;
@@ -154,6 +188,7 @@ function Index() {
 
   return (
     <main className="min-h-screen bg-hero-gradient">
+<<<<<<< HEAD
 
       {/* Apnea Alert Overlay */}
       {apneaTimer && (
@@ -224,6 +259,9 @@ function Index() {
           </Button>
         </div>
       </header>
+=======
+      <SiteHeader />
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
 
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-12 pt-8 lg:grid-cols-2 lg:gap-8 lg:pt-16">
@@ -235,9 +273,23 @@ function Index() {
             Analyzing breathing and snoring<br />patterns through sound.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+<<<<<<< HEAD
             <Button onClick={handleDownload} variant="outline" className="h-12 rounded-full border-foreground/20 bg-background/70 px-6 backdrop-blur">
               <Download className="mr-2 h-4 w-4" />
               Download Sleep History
+=======
+            <Button asChild className="h-12 rounded-full px-6 text-sm font-semibold">
+              <Link to={serial ? "/dashboard" : "/auth"}>
+                {serial ? "Open Dashboard" : "Start Monitoring"}
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-12 rounded-full border-foreground/20 bg-background/70 px-6 backdrop-blur"
+            >
+              <Link to="/logs">View Logs & History</Link>
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
             </Button>
           </div>
         </div>
@@ -251,7 +303,11 @@ function Index() {
         </div>
       </section>
 
+<<<<<<< HEAD
       {/* Dashboard tabs */}
+=======
+      {/* Live monitor preview */}
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <Tabs defaultValue="monitor">
           <TabsList className="mb-6 rounded-full border border-border bg-background/70 p-1 backdrop-blur">
@@ -312,6 +368,7 @@ function Index() {
               </div>
             </div>
 
+<<<<<<< HEAD
             {/* FFT Chart */}
             <div className="rounded-3xl border border-border bg-card/80 p-6 shadow-soft backdrop-blur md:p-8">
               <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -449,6 +506,25 @@ function Index() {
             </div>
           </TabsContent>
         </Tabs>
+=======
+          <div className="h-[420px] w-full">
+            <FftChart frequencies={chartData.frequencies} magnitudes={chartData.magnitudes} />
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <Stat label="Dominant Freq" value={fft?.dominant_hz != null ? `${fft.dominant_hz.toFixed(1)} Hz` : "—"} />
+            <Stat label="Energy" value={fft?.energy != null ? fft.energy.toFixed(3) : "—"} />
+            <Stat label="Snore Count" value={status?.snore_count?.toString() ?? "0"} />
+            <Stat label="Session" value={status?.session_time ?? "00:00:00"} />
+          </div>
+
+          {!serial && (
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              Showing demo spectrum. Sign in to stream live data from your Guardian's Pillow.
+            </p>
+          )}
+        </div>
+>>>>>>> 7446a639ac1f04acd0998e3b02405678ba7102d1
       </section>
     </main>
   );
