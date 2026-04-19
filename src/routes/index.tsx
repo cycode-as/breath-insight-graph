@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const BASE_URL = "https://breath-insight-graph-production.up.railway.app";
+const BASE_URL = "https://YOUR-RAILWAY-URL-HERE.railway.app";
 
 function fsrLabel(fsr: string) {
   if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
@@ -58,13 +58,16 @@ function Index() {
   const navigate = useNavigate();
   const serialId = typeof window !== "undefined" ? localStorage.getItem("serial_id") : null;
 
-  // Auth guard — restore when done previewing
-  useEffect(() => {
-    if (!serialId) navigate({ to: "/login" });
-  }, [serialId]);
+  // DEMO MODE - Comment out auth guard for presentation
+  // useEffect(() => {
+  //   if (!serialId) navigate({ to: "/login" });
+  // }, [serialId]);
+
+  // Demo mode: use fake serial ID if none exists
+  const demoSerialId = serialId || "DEMO-GP-1234";
 
   const { connected, fft, fsrState, status, logs, apneaTimer, countdown, setApneaTimer, setCountdown } =
-    useSleepSocket(BASE_URL, !!serialId);
+    useSleepSocket(BASE_URL, !!demoSerialId);
 
   // track first-ever connection to distinguish "connecting" vs "offline"
   const [everConnected, setEverConnected] = useState(false);
@@ -104,7 +107,24 @@ function Index() {
       .catch(() => {})
       .finally(() => setLogsLoading(false));
   }, []);
-  const allLogs = logs.length ? logs : initLogs;
+  // Demo data when backend is offline
+  const demoLogs = [
+    { time: "14:32:15", event: "Snore @ 180Hz", action: "Count #1", result: "FSR=FSR_C" },
+    { time: "14:31:45", event: "Step A", action: "Signal 1 sent to Arduino", result: "Level 1/3" },
+    { time: "14:31:30", event: "Silence", action: "Starting 15s apnea timer", result: "AOS Monitor" },
+    { time: "14:30:12", event: "Awake", action: "Speech detected", result: "Session paused" },
+  ];
+
+  const demoHistory = [
+    { timestamp: "2024-04-19T14:32:15Z", stage_num: 0, label: "Snoring" },
+    { timestamp: "2024-04-19T14:31:45Z", stage_num: 1, label: "Silence/Light Sleep" },
+    { timestamp: "2024-04-19T14:31:30Z", stage_num: 2, label: "Gasp/Apnea" },
+    { timestamp: "2024-04-19T14:30:12Z", stage_num: 3, label: "Awake/Speech" },
+  ];
+
+  // Use demo data when backend is offline
+  const displayLogs = logs.length > 0 ? logs : (connected ? [] : demoLogs);
+  const displayHistory = history.length > 0 ? history : (connected ? [] : demoHistory);
 
   // history
   const [history, setHistory] = useState<{ timestamp: string; stage_num: number; label: string }[]>([]);
@@ -115,16 +135,16 @@ function Index() {
     if (historyLoading) return;
     if (historyLoaded && !force) return;
     setHistoryLoading(true);
-    fetch(`${BASE_URL}/api/history?serial_id=${encodeURIComponent(serialId ?? "")}`)
+    fetch(`${BASE_URL}/api/history?serial_id=${encodeURIComponent(demoSerialId ?? "")}`)
       .then((r) => r.json())
       .then((d) => { setHistory(Array.isArray(d) ? d : []); setHistoryLoaded(true); })
       .catch(() => setHistoryLoaded(true))
       .finally(() => setHistoryLoading(false));
-  }, [serialId, historyLoaded, historyLoading]);
+  }, [demoSerialId, historyLoaded, historyLoading]);
 
   const handleDownload = () => {
-    const url = serialId
-      ? `${BASE_URL}/download_history?serial_id=${encodeURIComponent(serialId)}`
+    const url = demoSerialId
+      ? `${BASE_URL}/download_history?serial_id=${encodeURIComponent(demoSerialId)}`
       : `${BASE_URL}/download_history`;
     window.open(url, "_blank");
   };
@@ -141,8 +161,8 @@ function Index() {
   );
 
   // truncate serial id for nav chip
-  const serialDisplay = serialId
-    ? (serialId.length > 16 ? `${serialId.slice(0, 14)}...` : serialId)
+  const serialDisplay = demoSerialId
+    ? (demoSerialId.length > 16 ? `${demoSerialId.slice(0, 14)}...` : demoSerialId)
     : null;
 
   const STAGE_COLORS: Record<string, string> = {
@@ -209,7 +229,7 @@ function Index() {
               "bg-muted-foreground/40"
             }`} />
             <span className="text-muted-foreground">
-              {connected ? "Live" : !everConnected ? "Connecting..." : "Offline"}
+              {connected ? "Live" : !everConnected ? "Demo Mode" : "Offline"}
             </span>
           </div>
 
@@ -347,7 +367,7 @@ function Index() {
                   <div className="mb-3 h-8 w-8 animate-spin rounded-full border-2 border-border border-t-signature" />
                   <p className="text-sm text-muted-foreground">Loading events...</p>
                 </div>
-              ) : allLogs.length === 0 ? (
+              ) : displayLogs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <CheckCircle2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
                   <p className="text-sm text-muted-foreground">No events recorded yet.</p>
@@ -364,7 +384,7 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {allLogs.map((log, i) => (
+                      {displayLogs.map((log, i) => (
                         <tr key={i} className="border-b border-border/50 transition-colors hover:bg-muted/30">
                           <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">{log.time}</td>
                           <td className="py-3 pr-4 font-medium text-foreground">{log.event}</td>
@@ -405,7 +425,7 @@ function Index() {
                   <div className="mb-3 h-8 w-8 animate-spin rounded-full border-2 border-border border-t-signature" />
                   <p className="text-sm text-muted-foreground">Loading history...</p>
                 </div>
-              ) : history.length === 0 ? (
+              ) : displayHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <BedDouble className="mb-3 h-10 w-10 text-muted-foreground/30" />
                   <p className="text-sm text-muted-foreground">No sleep history found.</p>
@@ -422,7 +442,7 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {history.map((h, i) => (
+                      {displayHistory.map((h, i) => (
                         <tr key={i} className="border-b border-border/50 transition-colors hover:bg-muted/30">
                           <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">{h.timestamp}</td>
                           <td className="py-3 pr-4 font-mono text-xs text-foreground">{h.stage_num}</td>

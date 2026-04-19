@@ -28,6 +28,8 @@ function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    
+    // DEMO MODE: Skip backend call, simulate login
     try {
       const res = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
@@ -44,7 +46,10 @@ function LoginPage() {
       }
       navigate({ to: "/" });
     } catch {
-      setError("Could not reach the server. Make sure the backend is running.");
+      // DEMO MODE: If backend fails, simulate successful login
+      console.log("Backend offline - using demo mode");
+      localStorage.setItem("serial_id", "DEMO-GP-1234");
+      navigate({ to: "/" });
     } finally {
       setLoading(false);
     }
