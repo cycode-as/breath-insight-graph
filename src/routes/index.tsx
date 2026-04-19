@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://YOUR-RAILWAY-URL-HERE.railway.app";
 
 function fsrLabel(fsr: string) {
   if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
