@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const BASE_URL = "https://YOUR-RAILWAY-URL-HERE.railway.app";
+const BASE_URL = "https://breath-insight-graph-production.up.railway.app";
 
 function fsrLabel(fsr: string) {
   if (fsr === "FSR_0") return { text: "Bed Empty", sub: "FSR: 0", active: false };
